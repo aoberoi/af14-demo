@@ -10,19 +10,15 @@ h2 {
   font-size: 2em;
 }
 
+a {
+  text-decoration: none;
+  color: #999;
+}
+
 .content {
   width: 980px;
   margin: 0 auto;
   position: relative;
-}
-
-.info {
-  /*
-  border: 3px solid rgba(1, 1, 1, 0.5);
-  padding: 0.5em 1em;
-  border-radius: 1em;
-  background: rgba(0, 0, 0, 0.5);
-  */
 }
 
 .info h2 {
@@ -74,7 +70,19 @@ h2 {
 }
 
 .control .stat {
-  font-size: 1.2em;
+  font-size: 1.1em;
+}
+
+.share {
+  color: #00aeef;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.notes {
+  position:relative;
+  top: 320px;
+  text-align: center;
 }
 
 #publisher, #subscribers {
@@ -106,3 +114,4 @@ h2 {
   width: 132px;
   height: 99px;
 }
+
