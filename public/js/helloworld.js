@@ -28,6 +28,8 @@ session.on({
     connectButton.textContent = 'Connect';
     connectButton.removeEventListener('click', disconnectFromSession);
     connectButton.addEventListener('click', connectToSession);
+    connectionCount--;
+    updateConnectionCount();
   },
 
   streamCreated: function(event) {
@@ -58,6 +60,7 @@ function connectToSession() {
 }
 
 function disconnectFromSession() {
+  publisher.on('streamDestroyed', stoppedPublishing);
   session.disconnect();
 }
 
