@@ -2,20 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>OpenTok Hello World</title>
+    <title>OpenTok AF14 Codec Demo</title>
     <script src="//static.opentok.com/webrtc/v2.2/js/TB.min.js"></script>
-    <script type="text/javascript">
-        var apiKey = '<%= apiKey %>';
-        var sessionId = '<%= sessionId %>';
-        var token = '<%= token %>';
-    </script>
-    <script src="/js/helloworld.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Metrophobic' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-    <h2>Hello, World!</h2>
-
-    <div id="publisher"></div>
-
-    <div id="subscribers"></div>
+  <div class="content">
+    <header class="info">
+      <h2>OpenTok AF14 Codec Demo</h2>
+    </header>
+    <div class="left">
+      <div id="publisher"></div>
+    </div>
+    <div class="control" id="control">
+      <button id="connect">Connect</button>
+      <p>Streams: 0</p>
+      <p>Connections: 0</p>
+    </div>
+    <div class="right">
+      <div id="subscribers"></div>
+    </div>
+  </div>
+  <script type="text/javascript">
+      var apiKey = '<%= apiKey %>';
+      var sessionId = '<%= sessionId %>';
+      var token = '<%= token %>';
+  </script>
+  <script src="/js/helloworld.js"></script>
 </body>
 </html>

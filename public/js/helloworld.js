@@ -1,32 +1,64 @@
-// Initialize an OpenTok Session object
 var session = TB.initSession(sessionId);
+//var publisher = TB.initPublisher(apiKey, 'publisher');
+var controlEl = document.getElementById('control');
+var connectButton = document.getElementById('connect');
+var publishButton;
+var publisher;
 
-// Initialize a Publisher, and place it into the element with id="publisher"
-var publisher = TB.initPublisher(apiKey, 'publisher');
+connectButton.addEventListener('click', connectToSession);
 
-// Attach event handlers
 session.on({
 
-  // This function runs when session.connect() asynchronously completes
   sessionConnected: function(event) {
-    // Publish the publisher we initialzed earlier (this will trigger 'streamCreated' on other
-    // clients)
-    session.publish(publisher);
+    publishButton = document.createElement('button');
+    publishButton.id = 'publish';
+    publishButton.textContent = 'Publish';
+    publishButton.addEventListener('click', startPublishing);
+    controlEl.insertBefore(publishButton, connectButton);
+    connectButton.textContent = 'Disconnect';
+    connectButton.removeEventListener('click', connectToSession);
+    connectButton.addEventListener('click', disconnectFromSession);
   },
 
-  // This function runs when another client publishes a stream (eg. session.publish())
-  streamCreated: function(event) {
-    // Create a container for a new Subscriber, assign it an id using the streamId, put it inside
-    // the element with id="subscribers"
-    var subContainer = document.createElement('div');
-    subContainer.id = 'stream-' + event.stream.streamId;
-    document.getElementById('subscribers').appendChild(subContainer);
+  sessionDisconnected: function(event) {
+    controlEl.removeChild(publishButton);
+    connectButton.textContent = 'Connect';
+    connectButton.removeEventListener('click', disconnectFromSession);
+    connectButton.addEventListener('click', connectToSession);
+  },
 
-    // Subscribe to the stream that caused this event, put it inside the container we just made
-    session.subscribe(event.stream, subContainer);
+  streamCreated: function(event) {
+    session.subscribe(event.stream, 'subscribers', { insertMode: 'append' });
   }
 
 });
 
-// Connect to the Session using the 'apiKey' of the application and a 'token' for permission
-session.connect(apiKey, token);
+function connectToSession() {
+  session.connect(apiKey, token);
+}
+
+function disconnectFromSession() {
+  session.disconnect();
+}
+
+function startPublishing() {
+  publisher = session.publish('publisher', { insertMode: 'append' }, startedPublishing);
+}
+
+function stopPublishing() {
+  publisher.on('streamDestroyed', stoppedPublishing);
+  session.unpublish(publisher);
+}
+
+function startedPublishing(err) {
+  if (err) { console.log(err); return; }
+  publishButton.textContent = 'Unpublish';
+  publishButton.removeEventListener('click', startPublishing);
+  publishButton.addEventListener('click', stopPublishing);
+}
+
+function stoppedPublishing(e) {
+  publishButton.textContent = 'Publish';
+  publishButton.removeEventListener('click', stopPublishing);
+  publishButton.addEventListener('click', startPublishing);
+}

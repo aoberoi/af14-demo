@@ -1,0 +1,35 @@
+* { box-sizing: border-box }
+
+body {
+  background: url(/img/triangular_blue.png);
+  font-family: 'Metrophobic', sans-serif;
+}
+
+h2 {
+  color: white;
+  font-size: 2em;
+}
+
+.content {
+  width: 980px;
+  margin: 0 auto;
+}
+
+.info {
+  /*
+  border: 3px solid rgba(1, 1, 1, 0.5);
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  background: rgba(0, 0, 0, 0.5);
+  */
+}
+
+.info h2 {
+  text-align: center;
+}
+
+.left, .control, .right {
+  width: 320px;
+  margin-right: 6px;
+  float: left;
+}
