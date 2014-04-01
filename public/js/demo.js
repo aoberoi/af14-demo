@@ -7,7 +7,8 @@ var session = TB.initSession(sessionId),
     connectionCount = 0,
     publishButton,
     publisher,
-    publisherInterval;
+    publisherInterval,
+    subscriberIntervals = {};
 
 connectButton.addEventListener('click', connectToSession);
 
@@ -34,14 +35,30 @@ session.on({
   },
 
   streamCreated: function(event) {
-    session.subscribe(event.stream, 'subscribers', { insertMode: 'append', width: 132, height: 99 });
+    var af14El = document.createElement('div');
+    af14El.id = 'sub-'+event.stream.streamId;
+    af14El.classList.add('af14');
+    document.getElementById('subscribers').appendChild(af14El);
+    var subscriber = session.subscribe(event.stream, 'subscribers', { insertMode: 'append', width: 132, height: 99 });
+
     streamCount++;
     updateStreamCount();
+
+    subscriberIntervals[event.stream.streamId] = setInterval(function() {
+      var oCanvasImg = new Image();
+      oCanvasImg.setAttribute("src", "data:image/png;base64," + subscriber.getImgData());
+      af14El.innerHTML = "";
+      af14El.appendChild(asciifyImage(oCanvasImg, 132, 99));
+    }, 100);
   },
 
   streamDestroyed: function(event) {
     streamCount--;
     updateStreamCount();
+
+    clearInterval(subscriberIntervals[event.stream.streamId]);
+    var sAscii = document.querySelector('#sub-'+event.stream.streamId);
+    sAscii.parentNode.removeChild(sAscii);
   },
 
   connectionCreated: function(event) {

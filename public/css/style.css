@@ -81,22 +81,28 @@ h2 {
   text-align:center;
 }
 
-#subscribers .OT_subscriber {
-  display: inline-block;
-}
-
 #subscribers {
   height: 215px;
   overflow: scroll;
 }
 
-#publisher .OT_publisher {
+#publisher .OT_publisher,
+#subscribers .OT_subscriber {
   display: none;
 }
-#publisher .af14 {
-  width: 264px;
-  height: 198px;
+
+.af14 {
   background-color: #000;
   color: #fff;
 }
 
+#publisher .af14 {
+  width: 264px;
+  height: 198px;
+}
+
+#subscribers .af14 {
+  display: inline-block;
+  width: 132px;
+  height: 99px;
+}
