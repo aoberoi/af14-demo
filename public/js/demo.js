@@ -8,126 +8,135 @@ var session = TB.initSession(sessionId),
     publishButton,
     publisher,
     publisherInterval,
-    subscriberIntervals = {};
+    subscriberIntervals = {},
+    is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
-connectButton.addEventListener('click', connectToSession);
+if (!is_firefox) {
+  (function() {
 
-session.on({
-
-  sessionConnected: function(event) {
-    publishButton = document.createElement('button');
-    publishButton.id = 'publish';
-    publishButton.textContent = 'Publish';
-    publishButton.addEventListener('click', startPublishing);
-    controlEl.insertBefore(publishButton, connectButton);
-    connectButton.textContent = 'Disconnect';
-    connectButton.removeEventListener('click', connectToSession);
-    connectButton.addEventListener('click', disconnectFromSession);
-  },
-
-  sessionDisconnected: function(event) {
-    controlEl.removeChild(publishButton);
-    connectButton.textContent = 'Connect';
-    connectButton.removeEventListener('click', disconnectFromSession);
     connectButton.addEventListener('click', connectToSession);
-    connectionCount--;
-    updateConnectionCount();
-  },
 
-  streamCreated: function(event) {
-    var af14El = document.createElement('div');
-    af14El.id = 'sub-'+event.stream.streamId;
-    af14El.classList.add('af14');
-    document.getElementById('subscribers').appendChild(af14El);
-    var subscriber = session.subscribe(event.stream, 'subscribers', { insertMode: 'append', width: 132, height: 99 });
+    session.on({
 
-    streamCount++;
-    updateStreamCount();
+      sessionConnected: function(event) {
+        publishButton = document.createElement('button');
+        publishButton.id = 'publish';
+        publishButton.textContent = 'Publish';
+        publishButton.addEventListener('click', startPublishing);
+        controlEl.insertBefore(publishButton, connectButton);
+        connectButton.textContent = 'Disconnect';
+        connectButton.removeEventListener('click', connectToSession);
+        connectButton.addEventListener('click', disconnectFromSession);
+      },
 
-    subscriberIntervals[event.stream.streamId] = setInterval(function() {
-      var oCanvasImg = new Image();
-      oCanvasImg.setAttribute("src", "data:image/png;base64," + subscriber.getImgData());
-      af14El.innerHTML = "";
-      af14El.appendChild(asciifyImage(oCanvasImg, 132, 99));
-    }, 100);
-  },
+      sessionDisconnected: function(event) {
+        controlEl.removeChild(publishButton);
+        connectButton.textContent = 'Connect';
+        connectButton.removeEventListener('click', disconnectFromSession);
+        connectButton.addEventListener('click', connectToSession);
+        connectionCount--;
+        updateConnectionCount();
+      },
 
-  streamDestroyed: function(event) {
-    streamCount--;
-    updateStreamCount();
+      streamCreated: function(event) {
+        var af14El = document.createElement('div');
+        af14El.id = 'sub-'+event.stream.streamId;
+        af14El.classList.add('af14');
+        document.getElementById('subscribers').appendChild(af14El);
+        var subscriber = session.subscribe(event.stream, 'subscribers', { insertMode: 'append', width: 132, height: 99 });
 
-    clearInterval(subscriberIntervals[event.stream.streamId]);
-    var sAscii = document.querySelector('#sub-'+event.stream.streamId);
-    sAscii.parentNode.removeChild(sAscii);
-  },
+        streamCount++;
+        updateStreamCount();
 
-  connectionCreated: function(event) {
-    connectionCount++;
-    updateConnectionCount();
-  },
+        subscriberIntervals[event.stream.streamId] = setInterval(function() {
+          var oCanvasImg = new Image();
+          oCanvasImg.setAttribute("src", "data:image/png;base64," + subscriber.getImgData());
+          af14El.innerHTML = "";
+          af14El.appendChild(asciifyImage(oCanvasImg, 132, 99));
+        }, 100);
+      },
 
-  connectionDestroyed: function(event) {
-    connectionCount--;
-    updateConnectionCount();
-  }
+      streamDestroyed: function(event) {
+        streamCount--;
+        updateStreamCount();
 
-});
+        clearInterval(subscriberIntervals[event.stream.streamId]);
+        var sAscii = document.querySelector('#sub-'+event.stream.streamId);
+        sAscii.parentNode.removeChild(sAscii);
+      },
 
-function connectToSession() {
-  session.connect(apiKey, token);
-}
+      connectionCreated: function(event) {
+        connectionCount++;
+        updateConnectionCount();
+      },
 
-function disconnectFromSession() {
-  publisher.on('streamDestroyed', stoppedPublishing);
-  session.disconnect();
-}
+      connectionDestroyed: function(event) {
+        connectionCount--;
+        updateConnectionCount();
+      }
 
-function startPublishing() {
-  document.getElementById('publisher').innerHTML = '<div class="af14"></div>';
-  publisher = session.publish('publisher', { insertMode: 'append' }, startedPublishing);
-}
+    });
 
-function stopPublishing() {
-  publisher.on('streamDestroyed', stoppedPublishing);
-  session.unpublish(publisher);
-}
+    function connectToSession() {
+      session.connect(apiKey, token);
+    }
 
-function startedPublishing(err) {
-  if (err) { console.log(err); return; }
+    function disconnectFromSession() {
+      publisher.on('streamDestroyed', stoppedPublishing);
+      session.disconnect();
+    }
 
-  publishButton.textContent = 'Unpublish';
-  publishButton.removeEventListener('click', startPublishing);
-  publishButton.addEventListener('click', stopPublishing);
+    function startPublishing() {
+      document.getElementById('publisher').innerHTML = '<div class="af14"></div>';
+      publisher = session.publish('publisher', { insertMode: 'append' }, startedPublishing);
+    }
 
-  streamCount++;
-  updateStreamCount();
+    function stopPublishing() {
+      publisher.on('streamDestroyed', stoppedPublishing);
+      session.unpublish(publisher);
+    }
 
-  var pAscii = document.querySelector('#publisher .af14');
-  publisherInterval = setInterval(function () {
-      var oCanvasImg = new Image();
-      oCanvasImg.setAttribute("src", "data:image/png;base64," + publisher.getImgData());
-      pAscii.innerHTML = "";
-      pAscii.appendChild(asciifyImage(oCanvasImg, 264, 198));
-  }, 100);
-}
+    function startedPublishing(err) {
+      if (err) { console.log(err); return; }
 
-function stoppedPublishing(e) {
-  publishButton.textContent = 'Publish';
-  publishButton.removeEventListener('click', stopPublishing);
-  publishButton.addEventListener('click', startPublishing);
+      publishButton.textContent = 'Unpublish';
+      publishButton.removeEventListener('click', startPublishing);
+      publishButton.addEventListener('click', stopPublishing);
 
-  streamCount--;
-  updateStreamCount();
+      streamCount++;
+      updateStreamCount();
 
-  clearInterval(publisherInterval);
-  var pAscii = document.querySelector('#publisher .af14');
-  pAscii.parentNode.removeChild(pAscii);
-}
+      var pAscii = document.querySelector('#publisher .af14');
+      publisherInterval = setInterval(function () {
+          var oCanvasImg = new Image();
+          oCanvasImg.setAttribute("src", "data:image/png;base64," + publisher.getImgData());
+          pAscii.innerHTML = "";
+          pAscii.appendChild(asciifyImage(oCanvasImg, 264, 198));
+      }, 100);
+    }
 
-function updateStreamCount() {
-  streamsStat.textContent = 'Streams: ' + streamCount;
-}
+    function stoppedPublishing(e) {
+      publishButton.textContent = 'Publish';
+      publishButton.removeEventListener('click', stopPublishing);
+      publishButton.addEventListener('click', startPublishing);
 
-function updateConnectionCount() {
-  connectionsStat.textContent = 'Connections: ' + connectionCount;
+      streamCount--;
+      updateStreamCount();
+
+      clearInterval(publisherInterval);
+      var pAscii = document.querySelector('#publisher .af14');
+      pAscii.parentNode.removeChild(pAscii);
+    }
+
+    function updateStreamCount() {
+      streamsStat.textContent = 'Streams: ' + streamCount;
+    }
+
+    function updateConnectionCount() {
+      connectionsStat.textContent = 'Connections: ' + connectionCount;
+    }
+
+  }());
+} else {
+  alert('Sorry, this demo is only available on recent versions of Google Chrome.');
 }
