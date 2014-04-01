@@ -28,7 +28,7 @@ session.on({
   },
 
   streamCreated: function(event) {
-    session.subscribe(event.stream, 'subscribers', { insertMode: 'append' });
+    session.subscribe(event.stream, 'subscribers', { insertMode: 'append', width: 132, height: 99 });
   }
 
 });

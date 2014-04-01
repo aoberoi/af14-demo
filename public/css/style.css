@@ -13,6 +13,7 @@ h2 {
 .content {
   width: 980px;
   margin: 0 auto;
+  position: relative;
 }
 
 .info {
@@ -28,8 +29,65 @@ h2 {
   text-align: center;
 }
 
-.left, .control, .right {
+.panel {
   width: 320px;
-  margin-right: 6px;
-  float: left;
+  height: 310px;
+  position: absolute;
+  top: 4em;
+  border: 3px solid rgba(1, 1, 1, 0.5);
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  background: rgba(0, 0, 0, 0.5);
 }
+
+.panel-label {
+  text-align: center;
+  color: white;
+}
+
+.left {
+  left: 0;
+}
+.control {
+  left: 325px;
+  background: rgba(127,127,127,0.5);
+  text-align: center;
+}
+.right {
+  left: 650px;
+}
+
+.control button {
+  box-shadow:inset 0px 1px 0px 0px #ffffff;
+  background-color:#ededed;
+  border-radius: 6px;
+  border:1px solid #dcdcdc;
+  color:#777777;
+  font-family: 'Metrophobic', sans-serif;
+  font-size:20px;
+  height:40px;
+  text-align:center;
+  text-shadow:1px 1px 0px #ffffff;
+  display:block;
+  width: 280px;
+  margin-bottom: 1em;
+}
+
+.control .stat {
+  font-size: 1.2em;
+}
+
+#publisher, #subscribers {
+  text-align:center;
+}
+
+#publisher .OT_publisher,
+#subscribers .OT_subscriber {
+  display: inline-block;
+}
+
+#subscribers {
+  height: 215px;
+  overflow: scroll;
+}
+
