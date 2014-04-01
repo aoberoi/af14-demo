@@ -11,8 +11,11 @@ var session = TB.initSession(sessionId),
     subscriberIntervals = {},
     is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
-if (!is_firefox) {
+//if (!is_firefox) {
+if (true) {
   (function() {
+
+    TB.setLogLevel(0);
 
     connectButton.addEventListener('click', connectToSession);
 
@@ -50,10 +53,13 @@ if (!is_firefox) {
 
         subscriberIntervals[event.stream.streamId] = setInterval(function() {
           var oCanvasImg = new Image();
-          oCanvasImg.setAttribute("src", "data:image/png;base64," + subscriber.getImgData());
-          af14El.innerHTML = "";
-          af14El.appendChild(asciifyImage(oCanvasImg, 132, 99));
-        }, 100);
+          var imgData = subscriber.getImgData();
+          if (imgData) {
+            oCanvasImg.setAttribute("src", "data:image/png;base64," + imgData);
+            af14El.innerHTML = "";
+            af14El.appendChild(asciifyImage(oCanvasImg, 132, 99));
+          }
+        }, 1000);
       },
 
       streamDestroyed: function(event) {
@@ -109,9 +115,14 @@ if (!is_firefox) {
       var pAscii = document.querySelector('#publisher .af14');
       publisherInterval = setInterval(function () {
           var oCanvasImg = new Image();
-          oCanvasImg.setAttribute("src", "data:image/png;base64," + publisher.getImgData());
-          pAscii.innerHTML = "";
-          pAscii.appendChild(asciifyImage(oCanvasImg, 264, 198));
+          var imgData = publisher.getImgData();
+          if (imgData) {
+            //console.log(imgData);
+            oCanvasImg.setAttribute("src", "data:image/png;base64," + imgData);
+            pAscii.innerHTML = "";
+            var asciifiedEl = asciifyImage(oCanvasImg, 264, 198);
+            pAscii.appendChild(asciifiedEl);
+          }
       }, 100);
     }
 
