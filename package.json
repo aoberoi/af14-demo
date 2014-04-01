@@ -13,6 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "opentok": "opentok/opentok-node#cleaning-up",
-    "express": "^3.5.1"
+    "express": "^3.5.1",
+    "moniker": "^0.1.2",
+    "ejs": "^1.0.0"
   }
 }
