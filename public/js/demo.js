@@ -6,7 +6,8 @@ var session = TB.initSession(sessionId),
     streamCount = 0,
     connectionCount = 0,
     publishButton,
-    publisher;
+    publisher,
+    publisherInterval;
 
 connectButton.addEventListener('click', connectToSession);
 
@@ -65,6 +66,7 @@ function disconnectFromSession() {
 }
 
 function startPublishing() {
+  document.getElementById('publisher').innerHTML = '<div class="af14"></div>';
   publisher = session.publish('publisher', { insertMode: 'append' }, startedPublishing);
 }
 
@@ -75,19 +77,34 @@ function stopPublishing() {
 
 function startedPublishing(err) {
   if (err) { console.log(err); return; }
+
   publishButton.textContent = 'Unpublish';
   publishButton.removeEventListener('click', startPublishing);
   publishButton.addEventListener('click', stopPublishing);
+
   streamCount++;
   updateStreamCount();
+
+  var pAscii = document.querySelector('#publisher .af14');
+  publisherInterval = setInterval(function () {
+      var oCanvasImg = new Image();
+      oCanvasImg.setAttribute("src", "data:image/png;base64," + publisher.getImgData());
+      pAscii.innerHTML = "";
+      pAscii.appendChild(asciifyImage(oCanvasImg, 264, 198));
+  }, 100);
 }
 
 function stoppedPublishing(e) {
   publishButton.textContent = 'Publish';
   publishButton.removeEventListener('click', stopPublishing);
   publishButton.addEventListener('click', startPublishing);
+
   streamCount--;
   updateStreamCount();
+
+  clearInterval(publisherInterval);
+  var pAscii = document.querySelector('#publisher .af14');
+  pAscii.parentNode.removeChild(pAscii);
 }
 
 function updateStreamCount() {

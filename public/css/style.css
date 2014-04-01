@@ -81,7 +81,6 @@ h2 {
   text-align:center;
 }
 
-#publisher .OT_publisher,
 #subscribers .OT_subscriber {
   display: inline-block;
 }
@@ -89,5 +88,15 @@ h2 {
 #subscribers {
   height: 215px;
   overflow: scroll;
+}
+
+#publisher .OT_publisher {
+  display: none;
+}
+#publisher .af14 {
+  width: 264px;
+  height: 198px;
+  background-color: #000;
+  color: #fff;
 }
 
